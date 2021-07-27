@@ -2,7 +2,7 @@
     "first_name": "John",
     "last_name": "Smith",
     "age": 30,
-    "addess": {
+    "address": {
         "street": "Straight Av.",
         "number": 1
     }
