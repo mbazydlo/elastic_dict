@@ -3,4 +3,6 @@ Ready for documentation.
 """
 
 class ElasticDict:
-    pass
+    def __init__(self, source_dict):
+        self.source_dict = source_dict
+
