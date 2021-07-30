@@ -20,18 +20,18 @@ class ElasticDict:
         
         return temporary_dict
     
-    def _collect_all_keys(self, key, value):
+    def _load_to_target_dict(self, key, value):
         if key not in self.target_dict:
             self.target_dict[key] = [value]
         else:
             self.target_dict[key].append(value)
     
-    def parse_source_dict(self, level_dict):
+    def parse_source_dict(self, level_dict=None):
         if not level_dict:
             level_dict = self.source_dict
         
         for key, value in level_dict.items():
-            self._collect_all_keys(key, value)
+            self._load_to_target_dict(key, value)
             
             if isinstance(value, dict):
                 self.parse_source_dict(value)
