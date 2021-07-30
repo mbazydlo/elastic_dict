@@ -6,6 +6,12 @@ class ElasticDict:
     def __init__(self, source_dict):
         self.source_dict = source_dict
         self.target_dict = dict()
+    
+    def __str__(self):
+        return f"{self.target_dict}"
+    
+    def __repr__(self):
+        return f"ElasticDict[{self.target_dict}]"
 
     def _parse_string_keys(self, keys_as_string, delimiter=','):
         list_of_keys = keys_as_string.split(delimiter)

@@ -67,9 +67,18 @@ def test_load_to_target_dict(prepare_dictionary):
         is_all_list_type = map(lambda type_: type_ == 'list', list_of_value_types)
         assert any(is_all_list_type)
 
-
 def test_parse_source_dict(prepare_source_and_target_dictionary):
     obj = ElasticDict(prepare_source_and_target_dictionary[0])
     obj.parse_source_dict()
     assert isinstance(obj.target_dict, dict)
     assert obj.target_dict == prepare_source_and_target_dictionary[1]
+
+def test_str(prepare_source_and_target_dictionary):
+    obj = ElasticDict(prepare_source_and_target_dictionary)
+    assert str(obj.target_dict) == str(obj)
+    assert str(obj.target_dict) != str({1: 1})
+
+def test_repr(prepare_source_and_target_dictionary):
+    obj = ElasticDict(prepare_source_and_target_dictionary)
+    assert obj.__repr__() == f"ElasticDict[{obj.target_dict}]"
+    assert obj.__repr__() != "ElasticDict[{1: 1}]"
