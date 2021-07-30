@@ -38,7 +38,7 @@ def prepare_source_and_target_dictionary(request):
 
 def test_create_instance_elasticdict(prepare_dictionary):
     obj = ElasticDict(prepare_dictionary)
-    assert obj
+    assert isinstance(obj, ElasticDict)
 
 
 def test_parse_string_keys(prepare_dictionary):
@@ -82,3 +82,10 @@ def test_repr(prepare_source_and_target_dictionary):
     obj = ElasticDict(prepare_source_and_target_dictionary)
     assert obj.__repr__() == f"ElasticDict[{obj.target_dict}]"
     assert obj.__repr__() != "ElasticDict[{1: 1}]"
+
+def test_delitem(prepare_source_and_target_dictionary):
+    obj = ElasticDict(prepare_source_and_target_dictionary)
+    if obj:
+        del obj["name"]
+        prepare_source_and_target_dictionary[1].pop("name")
+        assert obj.target_dict == prepare_source_and_target_dictionary[1]
