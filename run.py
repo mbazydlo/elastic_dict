@@ -2,7 +2,7 @@
 Ready for documentation.
 """
 
-class ElasticDict:
+class ElasticDict(dict):
     def __init__(self, source_dict):
         self.source_dict = source_dict
         self.target_dict = dict()
@@ -12,6 +12,10 @@ class ElasticDict:
     
     def __repr__(self):
         return f"ElasticDict[{self.target_dict}]"
+    
+    def __delitem__(self, key):
+        self.target_dict.pop(key)
+        self.source_dict.pop(key)
 
     def _parse_string_keys(self, keys_as_string, delimiter=','):
         list_of_keys = keys_as_string.split(delimiter)
