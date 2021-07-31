@@ -16,7 +16,16 @@ class ElasticDict(dict):
     def __delitem__(self, key):
         self.target_dict.pop(key)
         self.source_dict.pop(key)
+    
+    def update(self, other_dict):
+        self.source_dict.update(other_dict.source_dict)
+        self.parse_source_dict(other_dict.target_dict)
 
+    def pop(self, key):
+        value = self.target_dict.pop(key)
+        self.source_dict.pop(key)
+        return value
+    
     def _parse_string_keys(self, keys_as_string, delimiter=','):
         list_of_keys = keys_as_string.split(delimiter)
         return list_of_keys
@@ -45,3 +54,14 @@ class ElasticDict(dict):
             
             if isinstance(value, dict):
                 self.parse_source_dict(value)
+
+obj = ElasticDict({"name": "Marcin"})
+obj_2 = ElasticDict({"age": 30})
+obj.parse_source_dict()
+obj_2.parse_source_dict()
+obj.update(obj_2)
+
+
+print(obj)
+print(obj.source_dict)
+print(obj.target_dict)
