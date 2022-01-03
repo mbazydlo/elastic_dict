@@ -10,7 +10,7 @@ class ElasticDict(MutableMapping):
             self.source_dict = source_dict
         else:
             self.source_dict = kwargs
-        self.target_dict = dict()
+        self.step_dict = dict()
         self.parts = list()
         self.delimiter = kwargs.get('delimiter', '.')
 
@@ -35,7 +35,7 @@ class ElasticDict(MutableMapping):
 
     def __setitem__(self, key, value):
         if self.delimiter not in key:
-            self.target_dict[key] = value
+            self.step_dict[key] = value
         else:
             keys = key.split('.')
             dict_ = self.source_dict
@@ -45,19 +45,20 @@ class ElasticDict(MutableMapping):
 
             dict_[keys[-1]] = value
 
-        self.target_dict[key] = value
+        self.step_dict[key] = value
 
     def __delitem__(self, key):
-        del self.source_dict[key]
+        *keys, last_key = key.split('.')
+
+        to_delete = self.get('.'.join(keys))
+        del to_delete[last_key]
+        del self.step_dict[key]
 
     def __iter__(self):
         return iter(self.source_dict)
     
     def __len__(self):
         return len(self.source_dict)
-    
-    def __str__(self):
-        return str(self.source_dict)
 
     def __repr__(self):
         return str(self.source_dict)
@@ -79,7 +80,7 @@ class ElasticDict(MutableMapping):
         """
 
         found_keys = []
-        for key_, value in self.target_dict.items():
+        for key_, value in self.step_dict.items():
 
             conditions = [
                 key_.endswith(self.delimiter + key) or not key_.strip(key),
@@ -96,7 +97,7 @@ class ElasticDict(MutableMapping):
         """
         Returns first key of matches.
 
-        :param str key: The key to be find in target_dict
+        :param str key: The key to be find in step_dict
         :return: The value of first key
         :rtype: str
         """
@@ -125,6 +126,6 @@ class ElasticDict(MutableMapping):
             if isinstance(value, dict):
                 self.create_step_dict(value)
             else:
-                self.target_dict['.'.join(self.parts)] = value
+                self.step_dict['.'.join(self.parts)] = value
             self.parts.pop()
 
