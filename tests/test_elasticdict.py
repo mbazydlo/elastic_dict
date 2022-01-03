@@ -2,7 +2,7 @@ import os
 import json
 import pytest
 
-from ..run import ElasticDict
+from elasticdict.elastic import ElasticDict
 
 @pytest.fixture(params=[f'dictionary_{number}.json' for number in range(1, 4)])
 def prepare_dictionary(request):
