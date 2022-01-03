@@ -13,6 +13,8 @@ class ElasticDict(MutableMapping):
         self.target_dict = dict()
         self.parts = list()
         self.delimiter = kwargs.get('delimiter', '.')
+
+        self.create_step_dict()
     
     def __getitem__(self, key: str):
         """
@@ -32,23 +34,18 @@ class ElasticDict(MutableMapping):
             return self.get_value_from_string_keys(key)
 
     def __setitem__(self, key, value):
-        pass
-    #     if self.delimiter not in key:
-    #         self.target_dict[key] = value
-    #     else:
-    #         # keys = ''.join([f'["{single_key}"]' for single_key in key.split('.')])
-    #         # command = f'self.target_dict{keys}'
-    #         # eval(command)
-    #         # len_ = len(key.strip('.'))
-    #         # dict_ = self.target_dict.copy()
-    #         for index, single_key in enumerate(key.split('.'), start=1):
-                
-    #             if index < len_:
-    #                 dict_ = dict_.setdefault(single_key, {})
-    #             else:
-    #                 self.target_dict[single_key] = value
-                
+        if self.delimiter not in key:
+            self.target_dict[key] = value
+        else:
+            keys = key.split('.')
+            dict_ = self.source_dict
 
+            for index, single_key in enumerate(keys[:-1], start=1):
+                dict_ = dict_.setdefault(single_key, {})
+
+            dict_[keys[-1]] = value
+
+        self.target_dict[key] = value
 
     def __delitem__(self, key):
         del self.source_dict[key]
@@ -60,14 +57,17 @@ class ElasticDict(MutableMapping):
         return len(self.source_dict)
     
     def __str__(self):
-        return self.source_dict
+        return str(self.source_dict)
+
+    def __repr__(self):
+        return str(self.source_dict)
     
     def _check_input_type(self, value):
         if value.__class__ not in (dict,):
             raise TypeError('Input is not a dict')
         return True
 
-    def get_all(self, key: str, only: str=None, exclude: str=None):
+    def get_all(self, key: str, only: str = None, exclude: str = None):
         """
         Generates all values that match to the passed key.
 
@@ -114,16 +114,6 @@ class ElasticDict(MutableMapping):
             temporary_dict = temporary_dict.get(key, dict())
         
         return temporary_dict
-    
-    def parse_source_dict(self, level_dict=None):
-        if not level_dict:
-            level_dict = self.source_dict
-        
-        for key, value in level_dict.items():
-            self._collect_all_keys(key, value)
-            
-            if isinstance(value, dict):
-                self.parse_source_dict(value)
     
     def create_step_dict(self, value=None):
         if not value:
