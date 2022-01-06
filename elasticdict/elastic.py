@@ -16,7 +16,7 @@ class ElasticDict(MutableMapping):
 
         self.create_step_dict()
     
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: str, value=None):
         """
         Returns value for passed key.
         It accepts single key as well as multiples splited by self.delimiter
@@ -29,9 +29,9 @@ class ElasticDict(MutableMapping):
         """
 
         if self.delimiter not in key:
-            return self.source_dict.get(key)
+            return self.source_dict.get(key, value)
         else:
-            return self.get_value_from_string_keys(key)
+            return self.get_value_from_string_keys(key, value)
 
     def __setitem__(self, key, value):
         if self.delimiter not in key:
@@ -107,13 +107,14 @@ class ElasticDict(MutableMapping):
         list_of_keys = keys_as_string.split(self.delimiter)
         return list_of_keys
     
-    def get_value_from_string_keys(self, keys_as_string):
-        list_of_keys = self._parse_string_keys(keys_as_string)
+    def get_value_from_string_keys(self, keys_as_string, value=None):
+        *keys, last_key = self._parse_string_keys(keys_as_string)
         temporary_dict = self.source_dict
         
-        for key in list_of_keys:
+        for key in keys:
             temporary_dict = temporary_dict.get(key, dict())
-        
+
+        temporary_dict = temporary_dict.get(last_key, value)
         return temporary_dict
     
     def create_step_dict(self, value=None):
@@ -128,4 +129,22 @@ class ElasticDict(MutableMapping):
             else:
                 self.step_dict['.'.join(self.parts)] = value
             self.parts.pop()
+
+    def keys(self, source: str = 'source_dict'):
+        return self.__getattribute__(source).keys()
+
+    def values(self, source: str = 'source_dict'):
+        return self.__getattribute__(source).values()
+
+    def items(self, source: str = 'source_dict'):
+        return self.__getattribute__(source).items()
+
+    def elastic_keys(self):
+        return self.keys('step_dict')
+
+    def elastic_values(self):
+        return self.values('step_dict')
+
+    def elastic_items(self):
+        return self.items('step_dict')
 
