@@ -1,0 +1,13 @@
+{
+    "first_name": ["John"],
+    "last_name": ["Smith"],
+    "age": [30],
+    "address": [
+        {
+        "street": "Straight Av.",
+        "number": 1
+        }
+    ],
+    "street": ["Straight Av."],
+    "number": [1]
+}
