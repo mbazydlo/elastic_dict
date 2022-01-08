@@ -2,7 +2,7 @@
 Ready for documentation.
 """
 from collections.abc import MutableMapping, KeysView, ValuesView, ItemsView
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Union
 
 from elasticdict.errors import DuplicatedKeyError
 from elasticdict.utils import refresh_step_dict
@@ -66,6 +66,14 @@ class ElasticDict(MutableMapping):
 
     def __repr__(self):
         return str(self.source_dict)
+
+    def __eq__(self, other: Union[dict, MutableMapping]):
+        if isinstance(other, dict):
+            return self.step_dict == other
+        elif isinstance(other, ElasticDict):
+            return self.step_dict == other.step_dict
+        else:
+            raise TypeError(f'{other} should be dict or ElasticDict type, not {other.__class__}')
     
     def _check_input_type(self, value) -> bool:
         if value.__class__ not in (dict,):
