@@ -5,9 +5,12 @@ from collections.abc import MutableMapping, KeysView, ValuesView, ItemsView
 from typing import Dict, Any, List
 
 from elasticdict.errors import DuplicatedKeyError
+from elasticdict.utils import refresh_step_dict
 
 
 class ElasticDict(MutableMapping):
+
+    @refresh_step_dict
     def __init__(self, source_dict: dict = None, **kwargs):
         if source_dict and self._check_input_type(source_dict):
             self.source_dict = source_dict
@@ -16,8 +19,6 @@ class ElasticDict(MutableMapping):
         self.step_dict = dict()
         self.parts = list()
         self.delimiter = kwargs.get('delimiter', '.')
-
-        self.create_step_dict()
     
     def __getitem__(self, key: str, value=None):
         """
@@ -151,6 +152,10 @@ class ElasticDict(MutableMapping):
                 f'Dictionary cannot be flatted as there are non unique keys: {non_unique_keys}'
             )
         return flatted_dict
+
+    @refresh_step_dict
+    def update(self, other):
+        self.source_dict.update(other)
 
     def keys(self, source: str = 'source_dict') -> KeysView:
         return self.__getattribute__(source).keys()
