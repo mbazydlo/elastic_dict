@@ -1,0 +1,20 @@
+{
+    "input": {
+        "first_name": "John",
+        "last_name": "Smith",
+        "age": 30,
+        "address": {
+            "street": "Straight Av.",
+            "number": 1
+        }
+    },
+    "asserts": {
+        "test_ElasticDict__init__": {
+            "first_name": "John",
+            "last_name": "Smith",
+            "age": 30,
+            "address.street": "Straight Av.",
+            "address.number": 1
+        }
+    }
+}

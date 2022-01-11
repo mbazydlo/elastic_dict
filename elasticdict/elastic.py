@@ -65,7 +65,7 @@ class ElasticDict(MutableMapping):
         return len(self.source_dict)
 
     def __repr__(self):
-        return str(self.source_dict)
+        return f'ElasticDict[{self.source_dict}]'
 
     def __eq__(self, other: Union[dict, MutableMapping]):
         if isinstance(other, dict):
