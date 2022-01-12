@@ -5,12 +5,7 @@ from pathlib import Path
 import pytest
 
 from elasticdict.elastic import ElasticDict
-
-FIXTURES = (
-    'fixture_1.json',
-    'fixture_2.json', 
-    'fixture_3.json',
-)
+from tests.fixtures import FIXTURES
 
 
 @pytest.fixture(params=FIXTURES)
@@ -27,3 +22,4 @@ def test_ElasticDict__init__(elastic_dict_obj):
 
     assert isinstance(obj, ElasticDict)
     assert obj.step_dict == asserts.get('test_ElasticDict__init__')
+
