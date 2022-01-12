@@ -12,16 +12,18 @@ FIXTURES = (
     'fixture_3.json',
 )
 
+
 @pytest.fixture(params=FIXTURES)
-def elastcit_dict_obj(request):
-    file = ( Path(__file__).parent / 'fixtures' / request.param ).read_text()
+def elastic_dict_obj(request):
+    file = (Path(__file__).parent / 'fixtures' / request.param).read_text()
     data = json.loads(file)
-    input, asserts = itemgetter('input', 'asserts')(data)
-    obj = ElasticDict(**input)
+    input_, asserts = itemgetter('input', 'asserts')(data)
+    obj = ElasticDict(**input_)
     return obj, asserts
 
-def test_ElasticDict__init__(elastcit_dict_obj):
-    obj, asserts = elastcit_dict_obj
+
+def test_ElasticDict__init__(elastic_dict_obj):
+    obj, asserts = elastic_dict_obj
 
     assert isinstance(obj, ElasticDict)
     assert obj.step_dict == asserts.get('test_ElasticDict__init__')
