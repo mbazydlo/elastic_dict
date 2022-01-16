@@ -80,19 +80,32 @@ class ElasticDict(MutableMapping):
             raise TypeError('Input is not a dict')
         return True
 
-    def get_all(self, key: str, only: str = None, exclude: str = None) -> List[Any]:
+    def get_all(
+            self,
+            key: str,
+            only: str = None,
+            exclude: str = None,
+            min_depth: int = 1,
+            max_depth: int = 100
+    ) -> List[Any]:
         """
         Generates all values that match to the passed key.
 
         :param str key:
         :param str only:
         :param str exclude:
+        :param str min_depth:
+        :param str max_depth:
         :return: The list of values of all keys
         :rtype: list
         """
 
         found_keys = []
-        for key_, value in self.step_dict.items():
+
+        # Slicing source dictionary if min_depth or max_depth provided
+        target_dict = self._select_min_max_depth_data(min_depth, max_depth) if min_depth or max_depth else self.step_dict
+
+        for key_, value in target_dict.items():
 
             conditions = [
                 key_.endswith(self.delimiter + key) or not key_.strip(key),
@@ -114,6 +127,12 @@ class ElasticDict(MutableMapping):
         :rtype: str
         """
         return result[0] if (result := self.get_all(key)) else None
+
+    def _select_min_max_depth_data(self, min_depth, max_depth):
+        target_dict = {
+            key: value for key, value in self.step_dict.items() if min_depth <= key.count('.') + 1 <= max_depth
+        }
+        return target_dict
 
     def _parse_string_keys(self, keys_as_string: str) -> List[str]:
         list_of_keys = keys_as_string.split(self.delimiter)
