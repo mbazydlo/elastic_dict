@@ -118,15 +118,22 @@ class ElasticDict(MutableMapping):
 
         return found_keys
     
-    def get_one(self, key: str) -> Any:
+    def get_one(
+            self,
+            key: str,
+            min_depth: int = 1,
+            max_depth: int = 100
+    ) -> Any:
         """
         Returns first key of matches.
 
         :param str key: The key to be find in step_dict
+        :param int min_depth:
+        :param int max_depth:
         :return: The value of first key
         :rtype: str
         """
-        return result[0] if (result := self.get_all(key)) else None
+        return result[0] if (result := self.get_all(key, min_depth=min_depth, max_depth=max_depth)) else None
 
     def _select_min_max_depth_data(self, min_depth, max_depth):
         target_dict = {
