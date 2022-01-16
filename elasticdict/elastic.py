@@ -121,19 +121,26 @@ class ElasticDict(MutableMapping):
     def get_one(
             self,
             key: str,
+            unique=False,
             min_depth: int = 1,
-            max_depth: int = 100
+            max_depth: int = 100,
     ) -> Any:
         """
         Returns first key of matches.
 
         :param str key: The key to be find in step_dict
+        :param bool unique:
         :param int min_depth:
-        :param int max_depth:
+        :param int max_depth:DuplicatedKeyError
         :return: The value of first key
         :rtype: str
         """
-        return result[0] if (result := self.get_all(key, min_depth=min_depth, max_depth=max_depth)) else None
+
+        result = self.get_all(key, min_depth=min_depth, max_depth=max_depth)
+        if unique and (len_ := len(result)) > 1:
+            raise DuplicatedKeyError(f'The provided key is not unique. In occurs in at {len_} places', result)
+
+        return result[0] if result else None
 
     def _select_min_max_depth_data(self, min_depth, max_depth):
         target_dict = {
