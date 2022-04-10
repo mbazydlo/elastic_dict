@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from elasticdict.elastic import ElasticDict
-from tests.fixtures import FIXTURES
+from .fixtures import FIXTURES
 
 
 @pytest.fixture(params=FIXTURES)
