@@ -1,7 +1,7 @@
 import pathlib
 from setuptools import setup
 
-__version__ = "0.3.8"
+__version__ = "0.3.9"
 
 
 DIRNAME = pathlib.Path(__file__).parent
