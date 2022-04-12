@@ -4,21 +4,22 @@ Ready for documentation.
 from collections.abc import MutableMapping, KeysView, ValuesView, ItemsView
 from typing import Dict, Any, List, Union
 
-from elasticdict.errors import DuplicatedKeyError
-from elasticdict.utils import refresh_step_dict
+from errors import DuplicatedKeyError
+from utils import refresh_step_dict
 
 
 class ElasticDict(MutableMapping):
 
     @refresh_step_dict
-    def __init__(self, source_dict: dict = None, **kwargs):
+    def __init__(self, source_dict: dict = None, delimiter='.', default=None, **kwargs):
         if source_dict and self._check_input_type(source_dict):
             self.source_dict = source_dict
         else:
             self.source_dict = kwargs
         self.step_dict = dict()
         self.parts = list()
-        self.delimiter = kwargs.get('delimiter', '.')
+        self.delimiter = delimiter
+        self.default = default
     
     def __getitem__(self, key: str, value=None):
         """
@@ -33,9 +34,9 @@ class ElasticDict(MutableMapping):
         """
 
         if self.delimiter not in key:
-            return self.source_dict.get(key, value)
+            return self.source_dict.get(key, value or self.default)
         else:
-            return self.get_value_from_string_keys(key, value)
+            return self.get_value_from_string_keys(key, value or self.default)
 
     def __setitem__(self, key, value):
         if self.delimiter not in key:
