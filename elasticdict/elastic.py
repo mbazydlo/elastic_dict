@@ -3,6 +3,7 @@ Ready for documentation.
 """
 from collections.abc import MutableMapping, KeysView, ValuesView, ItemsView
 from typing import Dict, Any, List, Union
+import re
 
 from errors import DuplicatedKeyError
 from utils import refresh_step_dict
@@ -11,7 +12,7 @@ from utils import refresh_step_dict
 class ElasticDict(MutableMapping):
 
     @refresh_step_dict
-    def __init__(self, source_dict: dict = None, delimiter='.', default=None, **kwargs):
+    def __init__(self, source_dict: dict = None, *, delimiter='.', default=None, **kwargs):
         if source_dict and self._check_input_type(source_dict):
             self.source_dict = source_dict
         else:
@@ -104,7 +105,10 @@ class ElasticDict(MutableMapping):
         found_keys = []
 
         # Slicing source dictionary if min_depth or max_depth provided
-        target_dict = self._select_min_max_depth_data(min_depth, max_depth) if min_depth or max_depth else self.step_dict
+        if min_depth or max_depth:
+            target_dict = self._select_min_max_depth_data(min_depth, max_depth)
+        else:
+            target_dict = self.step_dict
 
         for key_, value in target_dict.items():
 
@@ -152,7 +156,11 @@ class ElasticDict(MutableMapping):
     def _parse_string_keys(self, keys_as_string: str) -> List[str]:
         list_of_keys = keys_as_string.split(self.delimiter)
         return list_of_keys
-    
+
+    def _if_array_return_slice(self, key: str) -> Union[List[str], None]:
+        if match := re.search('\[.+\]', key).group():
+            return match.strip('[').strip(']').split(':')
+
     def get_value_from_string_keys(self, keys_as_string: str, value=None):
         *keys, last_key = self._parse_string_keys(keys_as_string)
         temporary_dict = self.source_dict
@@ -216,4 +224,6 @@ class ElasticDict(MutableMapping):
 
     def elastic_items(self) -> ItemsView:
         return self.items('step_dict')
+
+
 
