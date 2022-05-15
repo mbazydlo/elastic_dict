@@ -1,7 +1,7 @@
 import pathlib
 from setuptools import setup
 
-__version__ = "0.3.9"
+__version__ = "0.3.11"
 
 
 DIRNAME = pathlib.Path(__file__).parent
@@ -18,7 +18,7 @@ setup(
     author_email="marcin.p.bazydlo@gmail.com",
     license="MIT",
     classifiers=[
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: MIT Licegnse",
         "Programming Language :: Python :: 3.6",
     ],
     packages=["elasticdict"],
